@@ -1,0 +1,63 @@
+{
+    // Verwendet IntelliSense zum Ermitteln möglicher Attribute.
+    // Zeigen Sie auf vorhandene Attribute, um die zugehörigen Beschreibungen anzuzeigen.
+    // Weitere Informationen finden Sie unter https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Debug (Launch) - Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-HelloOauthSrvApplication<hello-oauth-srv>",
+            "request": "launch",
+            "mainClass": "de.hska.iwi.vislab.lab5.srv.HelloOauthSrvApplication",
+            "projectName": "hello-oauth-srv"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-HelloOauthWebApplication<hello-oauth-web>",
+            "request": "launch",
+            "mainClass": "de.hska.iwi.vislab.lab5.web.HelloOauthWebApplication",
+            "projectName": "hello-oauth-web"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-TestWsClient<lab1-example>",
+            "request": "launch",
+            "mainClass": "de.hska.iwi.vislab.lab1.example.TestWsClient",
+            "projectName": "lab1-example"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-TestWsServer<lab1-example>",
+            "request": "launch",
+            "mainClass": "de.hska.iwi.vislab.lab1.example.TestWsServer",
+            "projectName": "lab1-example"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-Main<lab2-example>",
+            "request": "launch",
+            "mainClass": "de.hska.iwi.vislab.lab2.example.Main",
+            "projectName": "lab2-example"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-TestClient<vislab-rest-tcc>",
+            "request": "launch",
+            "mainClass": "tcc.TestClient",
+            "projectName": "vislab-rest-tcc"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-TestServer<vislab-rest-tcc>",
+            "request": "launch",
+            "mainClass": "tcc.TestServer",
+            "projectName": "vislab-rest-tcc"
+        }
+    ]
+}
