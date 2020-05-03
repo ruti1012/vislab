@@ -29,22 +29,6 @@ public class FibonacciService {
 				.build();
 	}
 
-	@PUT
-	public Response updateCurrentIndex(@QueryParam(value = "index") String index) {
-		int indexToUpdate;
-		try {
-			indexToUpdate = Integer.parseInt(index);
-			FibonacciService.currentIndex = indexToUpdate;
-		} catch(Exception e) {
-			return Response
-					.status(Response.Status.BAD_REQUEST)
-					.build();
-		}
-		return Response
-				.status(Response.Status.OK)
-				.build();
-	}
-
 	@DELETE
 	public Response resetCurrentIndex() {
 		FibonacciService.currentIndex = 0;
