@@ -4,6 +4,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.glassfish.grizzly.http.server.HttpServer;
 
@@ -12,7 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
-public class HelloWorldTest {
+public class FibonacciTest {
 
 	private HttpServer server;
 	private WebTarget target;
@@ -39,13 +40,20 @@ public class HelloWorldTest {
 	public void tearDown() throws Exception {
 		server.shutdown();
 	}
-
 	/**
-	 * Test to see that the message "Got it!" is sent in the response.
+	 * Sets the index to 5 and should calculate the 10th position for the fibonacci numbers as 5
 	 */
 	@Test
-	public void testSayHello() {
-		String responseMsg = target.path("helloworld").request().accept(MediaType.TEXT_PLAIN).get(String.class);
-		assertEquals("Hallo Welt!", responseMsg);
+	public void testFibonacciCalc() {
+
+		target.path("fibonacci").request().accept(MediaType.APPLICATION_JSON).get();
+		target.path("fibonacci").request().accept(MediaType.APPLICATION_JSON).get();
+		target.path("fibonacci").request().accept(MediaType.APPLICATION_JSON).get();
+		target.path("fibonacci").request().accept(MediaType.APPLICATION_JSON).get();
+		String response = target.path("fibonacci").request().accept(MediaType.APPLICATION_JSON).get(String.class);
+		assertEquals("{\"currentFibIndex\":5,\"currentFibValue\":5}", response);
+		target.path("fibonacci").request().delete();
+		String responseAfterReset = target.path("fibonacci").request().accept(MediaType.APPLICATION_JSON).get(String.class);
+		assertEquals("{\"currentFibIndex\":1,\"currentFibValue\":1}", responseAfterReset);
 	}
 }
