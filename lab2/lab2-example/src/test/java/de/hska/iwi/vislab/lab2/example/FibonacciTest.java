@@ -41,10 +41,10 @@ public class FibonacciTest {
 		server.shutdown();
 	}
 	/**
-	 * Sets the index to 5 and should calculate the 10th position for the fibonacci numbers as 5
+	 * Sets the index to 5 and should calculate the 5th position for the fibonacci numbers as 5
 	 */
 	@Test
-	public void testFibonacciCalc() {
+	public void testFibonacciGet() {
 
 		target.path("fibonacci").request().accept(MediaType.APPLICATION_JSON).get();
 		target.path("fibonacci").request().accept(MediaType.APPLICATION_JSON).get();
@@ -52,6 +52,18 @@ public class FibonacciTest {
 		target.path("fibonacci").request().accept(MediaType.APPLICATION_JSON).get();
 		String response = target.path("fibonacci").request().accept(MediaType.APPLICATION_JSON).get(String.class);
 		assertEquals("{\"currentFibIndex\":5,\"currentFibValue\":5}", response);
+	}
+	/**
+	 * Sets the index to 5, then resets it and should get the initial index 1 again afterwards
+	 */
+	@Test
+	public void testFibonacciDelete() {
+
+		target.path("fibonacci").request().accept(MediaType.APPLICATION_JSON).get();
+		target.path("fibonacci").request().accept(MediaType.APPLICATION_JSON).get();
+		target.path("fibonacci").request().accept(MediaType.APPLICATION_JSON).get();
+		target.path("fibonacci").request().accept(MediaType.APPLICATION_JSON).get();
+		target.path("fibonacci").request().accept(MediaType.APPLICATION_JSON).get(String.class);
 		target.path("fibonacci").request().delete();
 		String responseAfterReset = target.path("fibonacci").request().accept(MediaType.APPLICATION_JSON).get(String.class);
 		assertEquals("{\"currentFibIndex\":1,\"currentFibValue\":1}", responseAfterReset);
