@@ -75,8 +75,8 @@ public class FlightService {
 	public List<FlightReservationDoc> getBookings() throws BookingException {
 		logger.info("GET request received on /flight");
 		List<FlightReservationDoc> result = new LinkedList<FlightReservationDoc>();
-		for (Iterator<FlightReservation> iterator = frs.getReservations().iterator(); iterator.hasNext();) {
-			result.add(reservationToReservationDoc((FlightReservation) iterator.next()));
+		for (FlightReservation flightReservation : frs.getReservations()) {
+			result.add(reservationToReservationDoc(flightReservation));
 		}
 		return result;
 	}
