@@ -21,7 +21,7 @@ public class TestClient {
         try {
             Client client = ClientBuilder.newClient();
             WebTarget target = client.target(TestServer.BASE_URI);
-
+            int NUMBER_OF_RETRIES = 3;
             GregorianCalendar tomorrow = new GregorianCalendar();
             tomorrow.setTime(new Date());
             tomorrow.add(GregorianCalendar.DAY_OF_YEAR, 1);
@@ -78,22 +78,25 @@ public class TestClient {
 
                 // hotel conformation successful, now confirm flight reservation
                 if (responseHotelConformation.getStatus() == 200) {
-                    System.out.println("Output from Server: Hotel Conformation successful");
-                    WebTarget webTargetFlightConformation = client.target(outputFlight.getUrl());
-                    Response responseFlightConformation = webTargetFlightConformation
-                            .request()
-                            .accept(MediaType.TEXT_PLAIN)
-                            .put(Entity.xml(docFlight));
+                    for(int i = 0; i < NUMBER_OF_RETRIES; i++) {
+                        System.out.println("Output from Server: Hotel Conformation successful");
+                        WebTarget webTargetFlightConformation = client.target(outputFlight.getUrl());
+                        Response responseFlightConformation = webTargetFlightConformation
+                                .request()
+                                .accept(MediaType.TEXT_PLAIN)
+                                .put(Entity.xml(docFlight));
 
-                    // final state reached
-                    if (responseFlightConformation.getStatus() == 200) {
-                        System.out.println("Output from Server: Flight Conformation successful, Final State reached");
+                        // final state reached
+                        if (responseFlightConformation.getStatus() == 200) {
+                            System.out.println("Output from Server: Flight Conformation successful, Final State reached");
+                            break;
+                        }
                     }
                 }
             }
             // hotel reservation not successful, rollback of flight reservation required
             else if (responseHotel.getStatus() != 200 && responseFlight.getStatus() == 200) {
-                System.out.print("Hotel reservation unsuccessful, rolling back flight reservation.");
+                System.out.println("Hotel reservation unsuccessful, rolling back flight reservation.");
                 WebTarget webTargetFlightRollback = client.target(outputFlight.getUrl());
                 Response responseFlightRollback = webTargetFlightRollback
                         .request()
@@ -107,7 +110,7 @@ public class TestClient {
             }
             // flight reservation not successful, but
             else if (responseFlight.getStatus() != 200 && responseHotel.getStatus() == 200) {
-                System.out.print("Flight reservation unsuccessful, rolling back hotel reservation.");
+                System.out.println("Flight reservation unsuccessful, rolling back hotel reservation.");
                 WebTarget webTargetHotelRollback = client.target(outputHotel.getUrl());
                 Response responseHotelRollback = webTargetHotelRollback
                         .request()
