@@ -69,17 +69,31 @@ public class TestClient {
             // both operation are into reserved state
             if (responseHotel.getStatus() == 200 && responseFlight.getStatus() == 200) {
 
-                // confirm Hotel Reservation
-                WebTarget webTargetHotelConformation = client.target(outputHotel.getUrl());
-                Response responseHotelConformation = webTargetHotelConformation
-                        .request()
-                        .accept(MediaType.TEXT_PLAIN)
-                        .put(Entity.xml(docHotel));
+                boolean hotelConformationSuccessful = false;
+
+                // Hotel reservation confirmation try loop
+                for(int i = 0; i < NUMBER_OF_RETRIES; i++) {
+                    // confirm Hotel Reservation
+                    WebTarget webTargetHotelConformation = client.target(outputHotel.getUrl());
+                    Response responseHotelConformation = webTargetHotelConformation
+                            .request()
+                            .accept(MediaType.TEXT_PLAIN)
+                            .put(Entity.xml(docHotel));
+
+                    // stop looping if the confirmation was successful
+                    if (responseHotelConformation.getStatus() == 200) {
+                        System.out.println("Output from Server: Hotel Conformation successful");
+                        hotelConformationSuccessful = true;
+                        break;
+                    }
+                }
 
                 // hotel conformation successful, now confirm flight reservation
-                if (responseHotelConformation.getStatus() == 200) {
+                if (hotelConformationSuccessful) {
+                    boolean flightConformationSuccessful = false;
+
+                    // Flight reservation confirmation try loop
                     for(int i = 0; i < NUMBER_OF_RETRIES; i++) {
-                        System.out.println("Output from Server: Hotel Conformation successful");
                         WebTarget webTargetFlightConformation = client.target(outputFlight.getUrl());
                         Response responseFlightConformation = webTargetFlightConformation
                                 .request()
@@ -89,9 +103,40 @@ public class TestClient {
                         // final state reached
                         if (responseFlightConformation.getStatus() == 200) {
                             System.out.println("Output from Server: Flight Conformation successful, Final State reached");
+                            flightConformationSuccessful = true;
                             break;
                         }
                     }
+
+                    // if flight reservation could not be confirmed, rollback hotel confirmation
+                    if (!flightConformationSuccessful) {
+                        System.out.println("Output from Server: Flight Conformation not successful, canceling hotel reservation");
+
+                        boolean hotelCancelationSuccessful = false;
+
+                        for(int i = 0; i < NUMBER_OF_RETRIES; i++) {
+                            WebTarget webTargetHotelRollback = client.target(outputHotel.getUrl());
+                            Response responseHotelRollback = webTargetHotelRollback
+                                    .request()
+                                    .accept(MediaType.TEXT_PLAIN)
+                                    .delete();
+
+                            if (responseHotelRollback.getStatus() == 200) {
+                                hotelCancelationSuccessful = true;
+                                break;
+                            }
+                        }
+
+                        if (hotelCancelationSuccessful) {
+                            System.out.println("Cancelation of hotel reservation successful");
+                        } else {
+                            System.out.println("Cancelation of hotel reservation unsuccessful, an administrator has been notified.");
+                            // Actually contact an admin
+                        }
+                    }
+                }
+                else {
+                    System.out.println("Output from Server: Hotel Conformation not successful");
                 }
             }
             // hotel reservation not successful, rollback of flight reservation required
