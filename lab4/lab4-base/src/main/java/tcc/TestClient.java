@@ -70,25 +70,25 @@ public class TestClient {
             if (responseHotel.getStatus() == 200 && responseFlight.getStatus() == 200) {
 
                 // confirm Hotel Reservation
-                WebTarget webTargetHotelConformation = client.target(outputHotel.getUrl());
-                Response responseHotelConformation = webTargetHotelConformation
+                WebTarget webTargetHotelConfirmation = client.target(outputHotel.getUrl());
+                Response responseHotelConfirmation = webTargetHotelConfirmation
                         .request()
                         .accept(MediaType.TEXT_PLAIN)
                         .put(Entity.xml(docHotel));
 
-                // hotel conformation successful, now confirm flight reservation
-                if (responseHotelConformation.getStatus() == 200) {
+                // hotel confirmation successful, now confirm flight reservation
+                if (responseHotelConfirmation.getStatus() == 200) {
                     for(int i = 0; i < NUMBER_OF_RETRIES; i++) {
-                        System.out.println("Output from Server: Hotel Conformation successful");
-                        WebTarget webTargetFlightConformation = client.target(outputFlight.getUrl());
-                        Response responseFlightConformation = webTargetFlightConformation
+                        System.out.println("Output from Server: Hotel Confirmation successful");
+                        WebTarget webTargetFlightConfirmation = client.target(outputFlight.getUrl());
+                        Response responseFlightConfirmation = webTargetFlightConfirmation
                                 .request()
                                 .accept(MediaType.TEXT_PLAIN)
                                 .put(Entity.xml(docFlight));
 
                         // final state reached
-                        if (responseFlightConformation.getStatus() == 200) {
-                            System.out.println("Output from Server: Flight Conformation successful, Final State reached");
+                        if (responseFlightConfirmation.getStatus() == 200) {
+                            System.out.println("Output from Server: Flight Confirmation successful, Final State reached");
                             break;
                         }
                     }
