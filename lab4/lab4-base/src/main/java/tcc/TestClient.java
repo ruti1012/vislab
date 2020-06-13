@@ -69,26 +69,41 @@ public class TestClient {
             // both operation are into reserved state
             if (responseHotel.getStatus() == 200 && responseFlight.getStatus() == 200) {
 
-                // confirm Hotel Reservation
-                WebTarget webTargetHotelConfirmation = client.target(outputHotel.getUrl());
-                Response responseHotelConfirmation = webTargetHotelConfirmation
-                        .request()
-                        .accept(MediaType.TEXT_PLAIN)
-                        .put(Entity.xml(docHotel));
+                boolean hotelConformationSuccessful = false;
 
-                // hotel confirmation successful, now confirm flight reservation
-                if (responseHotelConfirmation.getStatus() == 200) {
+                // Hotel reservation confirmation try loop
+                for(int i = 0; i < NUMBER_OF_RETRIES; i++) {
+                    // confirm Hotel Reservation
+                    WebTarget webTargetHotelConformation = client.target(outputHotel.getUrl());
+                    Response responseHotelConformation = webTargetHotelConformation
+                            .request()
+                            .accept(MediaType.TEXT_PLAIN)
+                            .put(Entity.xml(docHotel));
+
+                    // stop looping if the confirmation was successful
+                    if (responseHotelConformation.getStatus() == 200) {
+                        System.out.println("Output from Server: Hotel Conformation successful");
+                        hotelConformationSuccessful = true;
+                        break;
+                    }
+                }
+
+                // hotel conformation successful, now confirm flight reservation
+                if (hotelConformationSuccessful) {
+                    boolean flightConformationSuccessful = false;
+
+                    // Flight reservation confirmation try loop
                     for(int i = 0; i < NUMBER_OF_RETRIES; i++) {
-                        System.out.println("Output from Server: Hotel Confirmation successful");
-                        WebTarget webTargetFlightConfirmation = client.target(outputFlight.getUrl());
-                        Response responseFlightConfirmation = webTargetFlightConfirmation
+                        WebTarget webTargetFlightConformation = client.target(outputFlight.getUrl());
+                        Response responseFlightConformation = webTargetFlightConformation
                                 .request()
                                 .accept(MediaType.TEXT_PLAIN)
                                 .put(Entity.xml(docFlight));
 
                         // final state reached
-                        if (responseFlightConfirmation.getStatus() == 200) {
-                            System.out.println("Output from Server: Flight Confirmation successful, Final State reached");
+                        if (responseFlightConformation.getStatus() == 200) {
+                            System.out.println("Output from Server: Flight Conformation successful, Final State reached");
+                            flightConformationSuccessful = true;
                             break;
                         }
                     }
