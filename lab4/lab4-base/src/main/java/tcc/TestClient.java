@@ -107,6 +107,36 @@ public class TestClient {
                             break;
                         }
                     }
+
+                    // if flight reservation could not be confirmed, rollback hotel confirmation
+                    if (!flightConformationSuccessful) {
+                        System.out.println("Output from Server: Flight Conformation not successful, canceling hotel reservation");
+
+                        boolean hotelCancelationSuccessful = false;
+
+                        for(int i = 0; i < NUMBER_OF_RETRIES; i++) {
+                            WebTarget webTargetHotelRollback = client.target(outputHotel.getUrl());
+                            Response responseHotelRollback = webTargetHotelRollback
+                                    .request()
+                                    .accept(MediaType.TEXT_PLAIN)
+                                    .delete();
+
+                            if (responseHotelRollback.getStatus() == 200) {
+                                hotelCancelationSuccessful = true;
+                                break;
+                            }
+                        }
+
+                        if (hotelCancelationSuccessful) {
+                            System.out.println("Cancelation of hotel reservation successful");
+                        } else {
+                            System.out.println("Cancelation of hotel reservation unsuccessful, an administrator has been notified.");
+                            // Actually contact an admin
+                        }
+                    }
+                }
+                else {
+                    System.out.println("Output from Server: Hotel Conformation not successful");
                 }
             }
             // hotel reservation not successful, rollback of flight reservation required
