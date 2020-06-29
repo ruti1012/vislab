@@ -10,9 +10,12 @@ curl -H "Authorization: Bearer b11ab62b-f420-4cd7-a1d0-167747c82e90" http://loca
 POST http://my-client-with-secret:secret@localhost:8080/oauth/token?grant_type=client_credentials HTTP/1.1
 Accept: application/json
 
-grant_type=client_credentials
+###
+
+GET http://localhost:8080/next HTTP/1.1
+Authorization: Bearer 78845751-aee3-4823-99fc-9ed1b3f103ad
 
 ###
 
-GET http://localhost:8080/hello HTTP/1.1
-Authorization: Bearer b11ab62b-f420-4cd7-a1d0-167747c82e90
+DELETE http://localhost:8080/next HTTP/1.1
+Authorization: Bearer 78845751-aee3-4823-99fc-9ed1b3f103ad

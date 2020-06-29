@@ -24,9 +24,21 @@ public class HelloOauthSrvApplication {
 		SpringApplication.run(HelloOauthSrvApplication.class, args);
 	}
 
-	@RequestMapping(value = "/hello", method = RequestMethod.GET)
-	public String hello() {
-		return "Hello Oauth!";
+	private int previous = 0;
+	private int next = 1;
+
+	@RequestMapping(value = "/next", method = RequestMethod.GET)
+	public String next() {
+		int out = previous + next;
+		previous = next;
+		next = out;
+		return Integer.toString(out);
+	}
+
+	@RequestMapping(value = "/reset", method = RequestMethod.DELETE)
+	public void reset() {
+		previous = 0;
+		next = 1;
 	}
 
 	@Configuration
@@ -50,24 +62,10 @@ public class HelloOauthSrvApplication {
 		public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
 			// @formatter:off
 			clients.inMemory()
-				.withClient("my-trusted-client")
-					.authorizedGrantTypes("password", "authorization_code", "refresh_token", "implicit")
+				.withClient("my-client-with-secret")
+					.authorizedGrantTypes("client_credentials")
 					.authorities("ROLE_CLIENT", "ROLE_TRUSTED_CLIENT")
 					.scopes("read", "write", "trust")
-					.resourceIds("oauth2-resource")
-					.accessTokenValiditySeconds(600)
-			.and()
-				.withClient("my-client-with-registered-redirect")
-					.authorizedGrantTypes("authorization_code")
-					.authorities("ROLE_CLIENT")
-					.scopes("read", "trust")
-					.resourceIds("oauth2-resource")
-					.redirectUris("http://anywhere?key=value")
-			.and()
-				.withClient("my-client-with-secret")
-					.authorizedGrantTypes("client_credentials", "password")
-					.authorities("ROLE_CLIENT")
-					.scopes("read")
 					.resourceIds("oauth2-resource")
 					.secret("secret");
 			// @formatter:on

@@ -1,9 +1,7 @@
 spring:
   application:
-    name: hello oauth srv
+    name: fibonacci oauth srv
 security:
-  user:
-    password: password
   oauth2:
     resource:
       filter-order: 3
